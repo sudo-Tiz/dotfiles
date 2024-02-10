@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DIR_TO_WATCH=${1}
+COMMAND=${2}
+
+
+trap exit SIGINT SIGTERM
+while :; do
+  watch --chgexit -n 5 "ls --all -l --recursive --full-time ${DIR_TO_WATCH} | sha256sum" && ${COMMAND}
+done

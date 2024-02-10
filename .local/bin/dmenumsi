@@ -1,0 +1,32 @@
+#!/bin/sh
+# One of the biggest mistakes in my life was buying a msi
+# Dmenu about CPU GPU and Temperature
+
+# Todo set profile
+hard=""
+smooth=""
+
+
+if [ "$(sudo isw -c | awk '/000090/{print $10}')" = "80" ]; then
+  boost="ON"
+  cooler="off"
+else
+  boost="OFF"
+  cooler="on"
+fi
+profile="$(sudo isw -p MSI_ADDRESS_DEFAULT | awk 'FNR==4 {print $3}')"
+choice="$(printf "CPU-HTOP\\nCPU-BTOP\\nGPU\\nTEMP\\nDUMP\\nCOOLER\\nPOWER\\nDISK" | dmenu -i -p "Fan boost is $boost | Fan profile : $profile")" || exit 1
+case $choice in
+  CPU-HTOP) setsid -f "$TERMINAL" -e htop ;;
+  CPU-BTOP) setsid -f "$TERMINAL" -e btop ;;
+  GPU) setsid -f "$TERMINAL" -e nvtop;;
+  TEMP) setsid -f "$TERMINAL" -e sudo isw -r ;setsid -f "$TERMINAL" -e  watch sensors ;; # TODO floating terminal and/or split in terminal 
+  DUMP) setsid -f "$TERMINAL" -e sudo isw -cp MSI_ADDRESS_DEFAULT -r;;
+  COOLER) sudo isw -b $cooler ;;
+  POWER) setsid -f "$TERMINAL" -e sudo powertop;;
+  DISK-USAGE) setsid -f "$TERMINAL" -e sudo iotop;;
+  DISK-SPACE) setsid -f "$TERMINAL" -e ncdu;;
+  #Set profile Hard)
+  #Set profile Smooth) 
+esac
+

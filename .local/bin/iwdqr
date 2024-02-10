@@ -1,0 +1,10 @@
+#!/bin/sh
+
+FILE=$(sudo find /var/lib/iwd -iname '*.psk' -type f -printf "%T+ %p\n" | sort | tail -1 | cut -d ' ' -f2-)
+SSID=${FILE:13:-4}
+PASS=$(sudo cat "$FILE" | grep Passphrase | cut -c 12-)
+STRING="WIFI:S:$SSID;T:WPA;P:$PASS;;"
+
+qrencode -t UTF8 "$STRING"
+echo -e "SSID: \033[1m${SSID}\033[0m"
+echo -e "Passphrase: \033[1m${PASS}\033[0m"

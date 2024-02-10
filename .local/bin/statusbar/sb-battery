@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Prints all batteries, their percentage remaining and an emoji corresponding
+# to charge status (🔌 for plugged up, 🔋 for discharging on battery, etc.).
+
+case $BLOCK_BUTTON in
+  1) notify-send "🔋" "$(acpi)"; pkill -RTMIN+3 "${STATUSBAR:-dwmblocks}";;
+  2) setsid -f "$TERMINAL" -e sudo powertop;;
+	3) notify-send "🔋 Battery module" "🔋: discharging
+🛑: not charging
+♻: stagnant charge
+🔌: charging
+⚡: charged
+❗: battery very low!
+- Scroll to change adjust xbacklight.";;
+	4) xbacklight -inc 1 ;;
+	5) xbacklight -dec 1 ;;
+	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+# Loop through all attached batteries and format the info
+for battery in /sys/class/power_supply/BAT?*; do
+	# If non-first battery, print a space separator.
+	[ -n "${capacity+x}" ] && printf " "
+	# Sets up the status and capacity
+	case "$(cat "$battery/status" 2>&1)" in
+		"Full") status="⚡" ;;
+		"Discharging") status="🔋" ;;
+		"Charging") status="🔌" ;;
+		"Not charging") status="🛑" ;;
+		"Unknown") status="♻️" ;;
+		*) exit 1 ;;
+	esac
+	capacity="$(cat "$battery/capacity" 2>&1)"
+	# Will make a warn variable if discharging and low
+	[ "$status" = "🔋" ] && [ "$capacity" -le 25 ] && warn="❗"
+	# Prints the info
+	printf "%s%s%d%%" "$status" "$warn" "$capacity"; unset warn
+
+	# Will make a notify if discharging and too low
+	[ "$status" = "🔋" ] && [ "$capacity" -le 10 ] && (notify-send "🔋❗ Battery low 🔋❗" "Please charge the computer ASAP"; ring /home/$USER/.local/share/larbs/ringtone/low-battery.mp3 >/dev/null 2>&1)
+  [ "$status" = "🔋" ] && [ "$capacity" -le 5 ] && (ring /home/$USER/.local/share/larbs/ringtone/wasted.mp3 >/dev/null 2>&1 ; sudo systemctl hibernate)
+
+done && printf "\\n"

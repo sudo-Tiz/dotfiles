@@ -1,0 +1,11 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+        1) nc_incron_notes ;;
+        2) /usr/bin/flock -n /tmp/lock.nextcloudcmd nc_cron ;;
+        3) notify-send "🖥 nextcloud module " "\- Sync nextcloud
+- Click to sync nextcloud notes.
+- Middle-click to sync all" ;;
+        6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+ ps aux | grep -v grep | grep nextcloudcmd >/dev/null && echo "   " || echo "   "

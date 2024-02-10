@@ -1,0 +1,7 @@
+#!/bin/sh
+# Show personnal help pages
+
+choice="$(ls ${XDG_DATA_HOME:-$HOME/.local/share}/larbs/getkeys | tr ' ' '\n' | dmenu -i -p "Choose the program you want some info" || exit 1)"
+which bat >/dev/null 2>&1 && PREVIEW="bat -p" || PREVIEW="cat"
+$TERMINAL -e sh -c "$PREVIEW ${XDG_DATA_HOME:-$HOME/.local/share}/larbs/getkeys/$choice 2>/dev/null && read wainting_for_keypress"
+

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+light="#ffffff"
+xres="$HOME/.config/x11/xresources"
+xresli="$HOME/.config/x11/xresources-light"
+[ "$(xrdb -query | awk '/color0/ {print $2}')" = "$light" ] && xrdb "$xres" || xrdb "$xresli"
+setbg
+pkill -RTMIN+25 "${STATUSBAR:-dwmblocks}"
+

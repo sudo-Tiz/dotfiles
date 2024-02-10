@@ -1,0 +1,14 @@
+cac ${XDG_CACHE_HOME:-$HOME/.cache}
+cf  ${XDG_CONFIG_HOME:-$HOME/.config}
+dt  ${XDG_DATA_HOME:-$HOME/.local/share}
+sc  $HOME/.local/bin
+src $HOME/.local/src
+
+h   $HOME
+mn  /mnt
+D   ${XDG_DOWNLOAD_DIR:-$HOME/Downloads}
+d   ${XDG_DOCUMENTS_DIR:-$HOME/documents}
+
+m   /media/HDD/$USER
+pp  $HOME/documents/progra
+S   $HOME/space

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+
+case $BLOCK_BUTTON in
+1)
+  toggle-bluetooth	
+	sleep 1
+	dmenu-bluetooth
+	;;
+2)
+  toggle-bluetooth	
+	sleep 1
+	setsid -f "$TERMINAL" -e bluetoothctl
+	;;
+3) notify-send "🖥 bluetooth module " "\- Shows bluetooth status.
+- Click to show dmenu.
+- Middle click to open bluetoothctl." ;;
+6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+[[ $(systemctl is-active bluetooth.service) = *inactive* ]] && echo "  " || echo "  "

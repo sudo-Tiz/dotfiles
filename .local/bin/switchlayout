@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ "$(setxkbmap -query | awk '/layout/{print $2}')" = "us" ]; then
+   setxkbmap -layout fr
+   notify-send "Layout" "FR"
+else
+   setxkbmap -layout us
+   notify-send "Layout" "US"
+fi

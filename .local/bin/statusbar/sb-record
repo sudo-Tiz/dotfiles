@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Displays number of unread mail and an loading icon if updating.
+# When clicked, brings up `neomutt`.
+
+case $BLOCK_BUTTON in
+	1) dmenurecord &&	pkill -RTMIN+9 "${STATUSBAR:-dwmblocks}" ;;
+	2) dmenurecord kill && 	pkill -RTMIN+9 "${STATUSBAR:-dwmblocks}";;
+	3) notify-send "📬 Camera module" "\- Shows when camera is on 
+- Left click opens dmenurecord
+- Middle click kill active recording" ;;
+	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+if ls /dev/video0 >/dev/null 2>&1 ; then
+test "$(cat /tmp/recordingicon)" = "" && echo " " || cat /tmp/recordingicon
+fi

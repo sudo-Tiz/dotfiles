@@ -1,0 +1,2 @@
+#!/bin/zsh
+[ -n $1 ] && FILE=$(find $1 -type f -exec grep -sIq . {} \; -print | dmenu -i -l 30) && [ -f "$FILE" ] && FILE=$(readlink -f "$FILE") && nvim $FILE

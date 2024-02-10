@@ -1,0 +1,22 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+1)
+	notify-send "🖥 CPU hogs" "$(ps axch -o cmd:15,%cpu --sort=-%cpu | head)\\n(100% per core)"
+	notify-send "🖥 GPU hogs" "  $(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader)"
+	pkill -RTMIN+18 "${STATUSBAR:-dwmblocks}"
+	;;
+2) dmenumsi ;;
+3) notify-send "TODO" "dmenufan help" ;;
+6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+#sensors | awk '/Package id 0/ {print "🌡" $4}'
+
+echo "\
+🌡 $((16#$(sudo isw -c | awk '/000060/{print $10}')))°C \
+ $((16#$(sudo isw -c | awk '/000070/{print $3}')))% \
+ $((16#$(sudo isw -c | awk '/000080/{print $2}')))°C \
+ $((16#$(sudo isw -c | awk '/000080/{print $11}')))% "
+
+# TODO use nvtop

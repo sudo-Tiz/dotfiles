@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [[ $(systemctl is-active bluetooth.service) = *inactive* ]]; then
+	sudo systemctl start bluetooth.service
+  notify-send "Bluetooth" "ON"
+  pkill -RTMIN+24 dwmblocks
+else
+	sudo systemctl stop bluetooth.service
+  notify-send "Bluetooth" "OFF"
+  pkill -RTMIN+24 dwmblocks
+fi

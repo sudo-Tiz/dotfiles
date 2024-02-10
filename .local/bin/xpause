@@ -1,0 +1,38 @@
+#!/bin/sh
+
+#Click on an x window to pause or resume
+#  This recursively obtains the child process tree of the whole application
+#requires xdotool, pgrep
+
+children() {
+    PIDNODES=$(for i in $@; do pgrep -P $i; done)
+
+    # empty pidnodes means recursive exit condition
+    if [ "$PIDNODES" ]; then
+        echo $PIDNODES
+        children $PIDNODES
+    fi
+}
+
+case $1 in
+    p)
+        KILLARG="-STOP"
+        ;;
+    r)
+        KILLARG="-CONT"
+        ;;
+    *)
+        echo "ERROR: Commands are \"p\" or \"r\" only!" >&2
+        exit 1
+        ;;
+esac
+
+
+PROC=$(xdotool selectwindow getwindowpid)
+CHILDREN=$(children $PROC)
+PROCS="$PROC $CHILDREN"
+
+for i in $PROCS; do
+    kill $KILLARG $i &
+done
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+[ ! -f "$1" ] && echo "Usage: ring [RINGTONE]" && exit
+
+vol="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
+
+[ "$vol" != "${vol%\[MUTED\]}" ] && (muted=1; wpctl set-mute @DEFAULT_AUDIO_SINK@ 0)
+
+vol="${vol#Volume: }"
+
+wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.80
+mpv "$1"
+wpctl set-volume @DEFAULT_AUDIO_SINK@ $vol
+[ "$muted" = "1" ] && wpctl set-mute @DEFAULT_AUDIO_SINK@ 1
