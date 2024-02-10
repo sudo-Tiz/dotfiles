@@ -68,7 +68,6 @@ alias \
 	sysdn='sudo systemctl disable --now' \
 	egrep="grep -E" \
 	lf="lfub" \
-	magit="nvim -c MagitOnly" \
 	ref="shortcuts >/dev/null; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" \
 	weath="less -S ${XDG_CACHE_HOME:-$HOME/.cache}/weatherreport" \
 	ee='exit' \
@@ -100,6 +99,7 @@ alias \
 	gusho='git push -f origin' \
 	gst='git status' \
   gl='git log' \
+  gb='git branch' \
   gch="git checkout" \
   gchb="git checkout -b" \
   gls='l --group-directories-first --color=auto -d $(git ls-tree $(git branch | grep \* | cut -d " " -f2) --name-only)' \
