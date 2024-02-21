@@ -77,7 +77,7 @@ alias \
   xclip="xclip -r -selection 'clipboard'"
   bak() {mv "$1" "$1.bak"}
   old() {cp "$1" "$1.old"}
-  baktar() { tar -zcvf "${1}_$(date '+%Y-%m-%d').tar.gz" "$1"; }
+  baktar() { tar -zcvf "${1}_$(date '+%Y-%m-%d_%H-%M').tar.gz" "$1"; }
   mdtemp() {cd $(mktemp -d)}
 
 # DOCKER
