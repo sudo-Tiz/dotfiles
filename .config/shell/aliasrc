@@ -76,6 +76,8 @@ alias \
   fd="fd -Hi" \
   xclip="xclip -r -selection 'clipboard'"
   bak() {mv "$1" "$1.bak"}
+  old() {cp "$1" "$1.old"}
+  baktar() { tar -zcvf "${1}_$(date '+%Y-%m-%d').tar.gz" "$1"; }
   mdtemp() {cd $(mktemp -d)}
 
 # DOCKER
@@ -105,9 +107,6 @@ alias \
   gls='l --group-directories-first --color=auto -d $(git ls-tree $(git branch | grep \* | cut -d " " -f2) --name-only)' \
   gll='l --group-directories-first --color=auto -d $(git ls-tree -r $(git branch | grep \* | cut -d " " -f2) --name-only)'
   gdi() {git diff --name-only --relative --diff-filter=d | xargs bat --diff}
-
-
-
 
 # VENV
 alias \
@@ -151,18 +150,6 @@ hf() {
 	eval $cmd
 }
 
-# LIST PATHS OF OTHER ZSH SHELLS I HAVE OPEN
-lssh() {
-	ps au |
-		awk '$11 == "-zsh" || $11 == "/bin/zsh" { print $2 }' |
-		xargs pwdx |
-		awk '{ print $2 }' |
-		sed -n "\|^${2}.*|p" |
-		sort -u |
-		nl
-}
-# CD TO SHELL NUMBER RETURNED BY LSSH
-cdsh() {cd $(lssh | sed "$1!d" | cut -f 2)}
 # CD TO PATH OF ANOTHER SHELL, USING FZF AS SELECTOR
 cs() {
 	cmd1=$(lssh | fzf --select-1 --query "$1" --height=~50 | cut -f 2)
