@@ -150,7 +150,17 @@ hf() {
 	eval $cmd
 }
 
-# CD TO PATH OF ANOTHER SHELL, USING FZF AS SELECTOR
+# list path to other zsh shell opened
+lssh() {
+	ps au |
+		awk '$11 == "-zsh" || $11 == "/bin/zsh" { print $2 }' |
+		xargs pwdx |
+		awk '{ print $2 }' |
+		sed -n "\|^${2}.*|p" |
+		sort -u |
+		nl
+}
+# cd to path of another shell, using fzf as selector
 cs() {
 	cmd1=$(lssh | fzf --select-1 --query "$1" --height=~50 | cut -f 2)
 	cmd="cd $cmd1"
