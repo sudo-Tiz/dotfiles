@@ -24,5 +24,3 @@ sensors | awk '/Package id 0/ {print "🌡" $4}'
 #  $((16#$(sudo isw -c | awk '/000070/{print $3}')))% \
 #  $((16#$(sudo isw -c | awk '/000080/{print $2}')))°C \
 #  $((16#$(sudo isw -c | awk '/000080/{print $11}')))% "
-#
-# TODO use nvtop
