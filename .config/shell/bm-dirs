@@ -9,6 +9,8 @@ mn  /mnt
 D   ${XDG_DOWNLOAD_DIR:-$HOME/Downloads}
 d   ${XDG_DOCUMENTS_DIR:-$HOME/documents}
 
-m   /media/HDD/$USER
-pp  $HOME/documents/progra
+M   /media/HDD/$USER
+P  $HOME/documents/progra
 S   $HOME/space
+mash $HOME/documents/progra/tizserv/mash-playbook
+mash-dev $HOME/documents/progra/tizserv/mash-playbook-dev
