@@ -9,7 +9,7 @@
 [ -f "$MBSYNCRC" ] && alias mbsync="mbsync -c $MBSYNCRC"
 
 # sudo not required for some system commands
-for command in mount umount sv updatedb su shutdown poweroff reboot isw; do
+for command in mount umount updatedb su shutdown poweroff reboot isw; do
 	alias $command="sudo $command"
 done; unset command
 
@@ -40,7 +40,7 @@ alias \
 
 # LS
 alias \
-	l="exa --group-directories-first --sort extension --group" \
+	l="eza --group-directories-first --sort extension --group" \
 	ll="l -l" \
 	la="l -aF" \
 	lla="l -laF"
@@ -60,19 +60,18 @@ alias \
 	YT="youtube-viewer" \
 	sdn="shutdown -h now" \
 	v="$EDITOR" \
-	svim="sudo vim" \
+	sv="sudo nvim" \
 	p="pacman" \
 	sp="sudo pacman" \
 	z="zathura" \
 	sysup='sudo systemctl enable --now' \
 	sysdn='sudo systemctl disable --now' \
-	egrep="grep -E" \
 	lf="lfub" \
 	ref="shortcuts >/dev/null; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc ; source ${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" \
 	weath="less -S ${XDG_CACHE_HOME:-$HOME/.cache}/weatherreport" \
 	ee='exit' \
 	tree='tree -CAhF --dirsfirst' \
-	grepr='grep -iIHrn' \
+	egrep="grep -E" \
   fd="fd -Hi" \
   xclip="xclip -r -selection 'clipboard'"
   bak() {mv "$1" "$1.bak"}
@@ -116,7 +115,7 @@ alias \
 	da='deactivate'
 
 # XRANDR
-alias \
+[ -x "$(command -v xrandr)" ] && alias \
 	xrandrright="xrandr --output $(xrandr | grep "connected primary" | awk '{print $1}') --rotate right" \
 	xrandrnormal="xrandr --output $(xrandr | grep "connected primary" | awk '{print $1}') --rotate normal" \
 	xrandrleft="xrandr --output $(xrandr | grep "connected primary" | awk '{print $1}') --rotate left" \
@@ -125,17 +124,15 @@ alias \
 	xrandr48="xrandr --output $(xrandr | grep "connected primary" | awk '{print $1}') --mode 1920x1080 --rate 48"
 
 # Copy progress bar
-alias \
+[ -x "$(command -v rsync)" ] && alias \
 	cpv='rsync -ah --info=progress2' \
 	mvv='rsync -ah --remove-source-files --info=progress2'
 
 # Micro to speaker
-alias \
-	micON='pactl load-module module-loopback latency_msec=1' \
-	micOFF='pactl unload-module module-loopback'
+alias	micloopback='pactl unload-module module-loopback >/dev/null 2>&1 | grep Failed && pactl load-module module-loopback latency_msec=1'
 
 # PDF to JPG (need imagemagick)
-pdftojpg() {
+[ -x "$(command -v convert)" ] && pdftojpg() {
 	[ $# = 1 ] && convert -density 150 "$1" -quality 90 "$(echo $1 | sed s/.pdf/%03d.jpg/g)" || echo ERROR
 }
 
@@ -162,8 +159,39 @@ lssh() {
 }
 # cd to path of another shell, using fzf as selector
 cs() {
-	cmd1=$(lssh | fzf --select-1 --query "$1" --height=~50 | cut -f 2)
+  if command -v fzf &> /dev/null; then
+	  cmd1=$(lssh | fzf --select-1 --query "$1" --height=~50 | cut -f 2)
+  else
+    echo "Select a shell to change directory to:"
+    lssh
+    read selection
+    cmd1=$(lssh | awk -v sel="$selection" 'NR == sel { print $2 }')
+  fi
 	cmd="cd $cmd1"
 	print -S $cmd
 	eval $cmd
+}
+
+[ -x "$(command -v xdg-open)" ] && pacweb() {
+    if [[ $# = 0 || "$1" =~ '--help|-h' ]]; then
+      local underline_color="\e[${color[underline]}m"
+      echo "$0 - open the website of an ArchLinux package"
+      echo
+      echo "Usage:"
+      echo "    $bold_color$0$reset_color ${underline_color}target${reset_color}"
+      return 1
+    fi
+
+    local pkg="$1"
+    local infos="$(LANG=C pacman -Si "$pkg")"
+    if [[ -z "$infos" ]]; then
+      return
+    fi
+    local repo="$(grep -m 1 '^Repo' <<< "$infos" | grep -oP '[^ ]+$')"
+    local arch="$(grep -m 1 '^Arch' <<< "$infos" | grep -oP '[^ ]+$')"
+    xdg-open "https://www.archlinux.org/packages/$repo/$arch/$pkg/" &>/dev/null
+}
+
+paclist() {
+  pacman -Qqe | xargs -I{} -P0 --no-run-if-empty pacman -Qs --color=auto "^{}\$"
 }
